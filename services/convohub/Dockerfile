@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# ConvoHub Dockerfile: orchestrator + tools + WAHA adapter
+# ConvoHub Dockerfile: supervisor + tools + WAHA adapter
 # Multi-stage for smaller final image
 
 ARG PYTHON_VERSION=3.11

@@ -12,10 +12,11 @@ class Settings(BaseSettings):
     OLLAMA_BASE_URL: str = Field(default="http://ollama:11434")
     OLLAMA_TIMEOUT: int = Field(default=60)
 
-    # Supervisor (orchestrator)
+    # Supervisor
     SUPERVISOR_MODEL: str = Field(default="llama3.1")
     SUPERVISOR_TEMPERATURE: float = Field(default=0.2)
-    ORCHESTRATOR_MAX_STEPS: int = Field(default=6)
+    SUPERVISOR_MAX_STEPS: int = Field(default=6)
+    SUPERVISOR_SYSTEM_PROMPT: str = Field(default="You are the Supervisor. Decide which tool to call based on the user's intent:\n- Use info_agent for FAQs or general company/customer information.\n- Use calendar_scheduler for availability checking and meeting scheduling.\nOutput: If a tool is needed, respond with: TOOL:<tool_name>:<user_query>. Otherwise answer directly.")
 
     # Info Agent
     INFO_AGENT_MODEL: str = Field(default="llama2.1")

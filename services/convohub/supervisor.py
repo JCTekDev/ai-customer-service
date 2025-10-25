@@ -15,13 +15,13 @@ from .agents.calendar_scheduler import calendar_scheduler_tool
 logger = logging.getLogger(__name__)
 
 # Define the shared state for the graph
-class OrchestratorState(dict):
+class SupervisorState(dict):
     """State container. Holds messages and the last tool used."""
     messages: List[Dict[str, Any]]
     last_tool: str | None
 
 
-def build_orchestrator_graph():
+def build_supervisor_graph():
     # Instantiate tool definitions
     # Build a simple tool registry (no ToolExecutor to avoid version API mismatch)
     tool_registry = {t["name"]: t for t in [info_agent_tool(), calendar_scheduler_tool()]}
@@ -34,18 +34,13 @@ def build_orchestrator_graph():
         timeout=settings.OLLAMA_TIMEOUT
     )
 
-    system_prompt = (
-        "You are the Orchestrator. Decide which tool to call based on the user's intent:\n"
-        "- Use info_agent for FAQs or general company/customer information.\n"
-        "- Use calendar_scheduler for availability checking and meeting scheduling.\n"
-        "Output: If a tool is needed, respond with: TOOL:<tool_name>:<user_query>. Otherwise answer directly."
-    )
+    system_prompt = settings.SUPERVISOR_SYSTEM_PROMPT
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         ("human", "{input}")
     ])
 
-    def router(state: OrchestratorState):
+    def router(state: SupervisorState):
         user_input = state.get("user_input", "")
         chain = prompt | llm
         resp = chain.invoke({"input": user_input})
@@ -69,26 +64,26 @@ def build_orchestrator_graph():
             {"role": "assistant", "content": text}
         ], "last_tool": None}
 
-    graph = StateGraph(OrchestratorState)
+    graph = StateGraph(SupervisorState)
     graph.add_node("router", router)
     graph.set_entry_point("router")
     graph.set_finish_point("router")
     compiled = graph.compile()
     return compiled
 
-class Orchestrator:
+class Supervisor:
     def __init__(self):
-        self.graph = build_orchestrator_graph()
+        self.graph = build_supervisor_graph()
 
     def invoke(self, user_input: str) -> str:
-        logger.debug(f"Orchestrator received input: {user_input}")
+        logger.debug(f"Supervisor received input: {user_input}")
         state = {"user_input": user_input, "messages": []}
-        logger.debug(f"Orchestrator state before invoke: {state}")
+        logger.debug(f"Supervisor state before invoke: {state}")
         result = self.graph.invoke(state)
-        logger.debug(f"Orchestrator result state: {result}")
+        logger.debug(f"Supervisor result state: {result}")
         msgs = result.get("messages", [])
-        logger.debug(f"Orchestrator messages: {msgs}")
+        logger.debug(f"Supervisor messages: {msgs}")
         if msgs:
-            logger.debug(f"Orchestrator returning message: {msgs[-1]['content']}")
+            logger.debug(f"Supervisor returning message: {msgs[-1]['content']}")
             return msgs[-1]["content"]
         return "[No response]"

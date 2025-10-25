@@ -3,13 +3,14 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
 from ..config import settings
-from ..orchestrator import Orchestrator
+from ..supervisor import Supervisor
 from .waha_service import WAHAService
 
 logger = logging.getLogger(__name__)
 app = FastAPI(title="WAHA Adapter")
 
-orchestrator = Orchestrator()
+waha_service = WAHAService()
+supervisor = Supervisor()
 waha_service = WAHAService()
 
 class WAHAWebhookReq(BaseModel):
@@ -37,10 +38,10 @@ async def waha_webhook(req: WAHAWebhookReq):
 
     logger.info(f"Processing message from {chat_id}: {body[:100]}")
     try:
-        response_text = orchestrator.invoke(body)
-        logger.debug(f"Orchestrator response: {response_text[:100]}")
+        response_text = supervisor.invoke(body)
+        logger.debug(f"Supervisor response: {response_text[:100]}")
     except Exception as e:
-        logger.error(f"Orchestrator error: {e}")
+        logger.error(f"Supervisor error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process message")
 
     # Attempt outbound WAHA send

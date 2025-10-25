@@ -159,7 +159,7 @@ class InfoAgent:
         return await self.ask(query)
 
 def info_agent_tool() -> Dict[str, Any]:
-    """Returns a tool definition for the orchestrator."""
+    """Returns a tool definition for the supervisor."""
     async def _invoke(input_text: str) -> str:
         logger.debug(f"Invoking InfoAgent with input_text: {input_text[:50]}")
         agent = InfoAgent(session_id="global")
