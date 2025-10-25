@@ -36,7 +36,8 @@ async def waha_webhook(req: WAHAWebhookReq):
     logger.info(f"Processing message from {chat_id}: {body[:100]}")
     try:
         response_text = orchestrator.invoke(body)
+        logger.debug(f"Orchestrator response: {response_text[:100]}")
     except Exception as e:
         logger.error(f"Orchestrator error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process message")
-    return {"status": "ok", "answer": response_text}
+    return {"status": "sent", "message": response_text}
