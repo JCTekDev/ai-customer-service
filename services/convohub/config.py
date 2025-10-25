@@ -34,8 +34,10 @@ class Settings(BaseSettings):
     TIMEZONE: str = Field(default="UTC")
     GOOGLE_CALENDAR_CREDENTIALS_FILE: str = Field(default="./credentials.json")
 
-    # WAHA
+    # WAHA integration (outbound)
     WAHA_API_KEY: str = Field(default="changeme")
+    WAHA_BASE_URL: str = Field(default="http://waha:3000")
+    WAHA_RESPONSE_TIMEOUT: int = Field(default=30)
 
     class Config:
         env_file = ".env"

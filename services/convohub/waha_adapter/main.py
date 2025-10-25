@@ -4,11 +4,13 @@ from pydantic import BaseModel
 from typing import Dict, Any
 from ..config import settings
 from ..orchestrator import Orchestrator
+from .waha_service import WAHAService
 
 logger = logging.getLogger(__name__)
 app = FastAPI(title="WAHA Adapter")
 
 orchestrator = Orchestrator()
+waha_service = WAHAService()
 
 class WAHAWebhookReq(BaseModel):
     event: str
@@ -17,7 +19,7 @@ class WAHAWebhookReq(BaseModel):
 
 @app.get("/healthz")
 async def healthz():
-    return {"ok": True}
+    return {"ok": True, "waha_available": waha_service.is_available()}
 
 @app.post("/webhook")
 async def waha_webhook(req: WAHAWebhookReq):
@@ -40,4 +42,13 @@ async def waha_webhook(req: WAHAWebhookReq):
     except Exception as e:
         logger.error(f"Orchestrator error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process message")
-    return {"status": "sent", "message": response_text}
+
+    # Attempt outbound WAHA send
+    send_ok = await waha_service.send_text(req.session, chat_id, response_text)
+    if not send_ok:
+        logger.error("Failed sending WAHA outbound message; returning locally only")
+        return {"status": "error", "message": response_text, "details": "WAHA send failed"}
+
+    resp = {"status": "sent", "message": response_text}
+    logger.debug(f"WAHA response envelope: {resp}")
+    return resp
