@@ -40,28 +40,40 @@ def build_supervisor_graph():
     ])
 
     def router(state: SupervisorState):
+        logger.debug(f"Accessing router with state: {state}")
         user_input = state.get("user_input", "")
+        logger.debug(f"User input: {user_input}")
         chain = prompt | llm
         resp = chain.invoke({"input": user_input})
+        logger.debug(f"LLM response: {resp}")
         text = resp.content.strip()
+        logger.debug(f"LLM response text: {text}")
         if text.startswith("TOOL:"):
             # parse TOOL:tool_name:query
+            logger.debug(f"Detected tool call in LLM response: {text}")
             try:
                 _, tool_name, query = text.split(":", 2)
+                logger.debug(f"Parsed tool call - Name: {tool_name}, Query: {query}")
                 if tool_name in tool_registry:
                     # Direct callable invocation
+                    logger.debug(f"Invoking tool: {tool_name} with query: {query}")
                     result = tool_registry[tool_name]["callable"](query)
-                    return {"messages": state.get("messages", []) + [
+                    logger.debug(f"Tool {tool_name} returned result: {result}")
+                    result_formatted = {"messages": state.get("messages", []) + [
                         {"role": "assistant", "content": f"[Tool {tool_name} result] {result}"}
                     ], "last_tool": tool_name}
+                    return result_formatted
             except Exception as e:
+                logger.error(f"Error during tool invocation: {e}")
                 return {"messages": state.get("messages", []) + [
                     {"role": "assistant", "content": f"[Routing error] {e}"}
                 ]}
         # No tool call, direct answer
-        return {"messages": state.get("messages", []) + [
+        logger.debug(f"No tool call detected, returning direct answer.")
+        direct_answer = {"messages": state.get("messages", []) + [
             {"role": "assistant", "content": text}
         ], "last_tool": None}
+        return direct_answer
 
     graph = StateGraph(SupervisorState)
     graph.add_node("router", router)
