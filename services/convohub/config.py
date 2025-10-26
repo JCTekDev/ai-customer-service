@@ -17,16 +17,16 @@ class Settings(BaseSettings):
     SUPERVISOR_TEMPERATURE: float = Field(default=0.2)
     SUPERVISOR_MAX_STEPS: int = Field(default=6)
     SUPERVISOR_SYSTEM_PROMPT: str = Field(default="You are the Supervisor. Decide which tool to call based on the user's intent:\n- Use info_agent for FAQs or general company/customer information.\n- Use calendar_scheduler for availability checking and meeting scheduling.\nOutput: If a tool is needed, respond with: TOOL:<tool_name>:<user_query>. Otherwise answer directly.")
-
+    
     # Info Agent
-    INFO_AGENT_MODEL: str = Field(default="llama2.1")
-    INFO_AGENT_SYSTEM_PROMPT: str = Field(default="You are an FAQ assistant. Answer clearly, concisely, and politely.")
-    INFO_AGENT_RECENT_MESSAGES_WINDOW: int = Field(default=6)
-    INFO_AGENT_TOKEN_BUDGET: int = Field(default=8192)
-    INFO_AGENT_SUMMARY_TOKEN_BUDGET: int = Field(default=800)
-    INFO_AGENT_MESSAGES_TO_SUMMARIZE: int = Field(default=8)
-    INFO_AGENT_SUMMARIZATION_PROMPT_TOKENS: int = Field(default=100)
-    INFO_AGENT_MESSAGE_SUMMARY_CHAR_LIMIT: int = Field(default=600)
+    SUPERVISOR_MODEL: str = Field(default="llama3.1")
+    SUPERVISOR_SYSTEM_PROMPT: str = Field(default="You are an FAQ assistant. Answer clearly, concisely, and politely.")
+    SUPERVISOR_RECENT_MESSAGES_WINDOW: int = Field(default=6)
+    SUPERVISOR_TOKEN_BUDGET: int = Field(default=8192)
+    SUPERVISOR_SUMMARY_TOKEN_BUDGET: int = Field(default=800)
+    SUPERVISOR_MESSAGES_TO_SUMMARIZE: int = Field(default=8)
+    SUPERVISOR_SUMMARIZATION_PROMPT_TOKENS: int = Field(default=100)
+    SUPERVISOR_MESSAGE_SUMMARY_CHAR_LIMIT: int = Field(default=600)
     REDIS_URL: Optional[str] = Field(default=None)
 
     # Calendar Scheduler

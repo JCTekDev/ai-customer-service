@@ -9,7 +9,6 @@ except ImportError:  # Fallback if new package not yet installed
     from langchain_community.chat_models import ChatOllama  # type: ignore
 from langgraph.graph import StateGraph, END
 from .config import settings
-from .agents.info_agent import info_agent_tool
 from .agents.calendar_scheduler import calendar_scheduler_tool
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ class SupervisorState(dict):
 def build_supervisor_graph():
     # Instantiate tool definitions
     # Build a simple tool registry (no ToolExecutor to avoid version API mismatch)
-    tool_registry = {t["name"]: t for t in [info_agent_tool(), calendar_scheduler_tool()]}
+    tool_registry = {t["name"]: t for t in [calendar_scheduler_tool()]}
 
     # Instantiate Ollama chat model using new package if available.
     llm = ChatOllama(
