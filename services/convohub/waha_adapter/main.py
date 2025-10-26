@@ -38,7 +38,7 @@ async def waha_webhook(req: WAHAWebhookReq):
 
     logger.info(f"Processing message from {chat_id}: {body[:100]}")
     try:
-        response_text = supervisor.invoke(body)
+        response_text = await supervisor.invoke(body)
         logger.debug(f"Supervisor response: {response_text[:100]}")
     except Exception as e:
         logger.error(f"Supervisor error: {e}")
