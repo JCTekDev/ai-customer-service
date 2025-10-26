@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="WAHA Adapter")
 
 waha_service = WAHAService()
+import asyncio
 supervisor = Supervisor()
 waha_service = WAHAService()
 
@@ -40,6 +41,10 @@ async def waha_webhook(req: WAHAWebhookReq):
     try:
         response_text = await supervisor.invoke(body)
         logger.debug(f"Supervisor response: {response_text[:100]}")
+    except TypeError:
+        # If supervisor.invoke is not a coroutine (sync), fallback to running in event loop
+        response_text = await asyncio.to_thread(supervisor.invoke, body)
+        logger.debug(f"Supervisor response (sync fallback): {response_text[:100]}")
     except Exception as e:
         logger.error(f"Supervisor error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process message")
