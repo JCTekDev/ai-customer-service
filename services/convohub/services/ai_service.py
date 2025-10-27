@@ -1,5 +1,5 @@
 import logging
-import httpx
+from ollama import AsyncClient as OllamaAsyncClient
 import traceback
 from ..config import settings
 
@@ -158,20 +158,28 @@ class AIService:
 
     async def _call_ollama_api(self, payload):
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.post(f"{self.base_url}/v1/chat/completions", json=payload)
-                response.raise_for_status()
-                data = response.json()
-                content = data["choices"][0]["message"]["content"]
-                return content
+            # Use synchronous OllamaClient in a thread for async compatibility
+            def sync_ollama_call():
+                from ollama import Client as OllamaClient
+                client = OllamaClient(host=self.base_url)
+                response = client.chat(
+                    model=self.model,
+                    messages=payload["messages"],
+                    options=payload.get("options", {})
+                )
+                return response['message']['content']
+            import asyncio
+            content = await asyncio.to_thread(sync_ollama_call)
+            return content
         except Exception as api_exc:
             logger.error(f"Exception during Ollama API call: {str(api_exc)}")
+            import traceback
             logger.error(traceback.format_exc())
             return None
 
     def _save_to_memory(self, prompt, content):
         if self.memory is not None:
-            try:
+            try: 
                 self.memory.save_context({"input": prompt}, {"output": content})
             except Exception as memory_error:
                 logger.warning(f"Failed to save conversation to Redis memory: {str(memory_error)}")
