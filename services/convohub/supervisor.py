@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 class SupervisorState(dict):
     messages: List[Dict[str, Any]]
     last_tool: str | None
+    user_input: str
 
 def build_supervisor_graph():
     tool_registry = {t["name"]: t for t in [calendar_scheduler_tool()]}
@@ -16,7 +17,7 @@ def build_supervisor_graph():
 
     async def router(state: SupervisorState):
         logger.debug(f"Accessing router with state: {state}")
-        user_input = state.get("user_input", "")
+        user_input = state.user_input
         logger.debug(f"User input: {user_input}")
         # Use AIService to generate response
         text = await ai_service.generate_response(user_input)
