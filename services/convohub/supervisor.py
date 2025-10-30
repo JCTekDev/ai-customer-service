@@ -17,7 +17,7 @@ def build_supervisor_graph():
 
     async def router(state: SupervisorState):
         logger.debug(f"Accessing router with state: {state}")
-        user_input = state.user_input
+        user_input = state['user_input']
         logger.debug(f"User input: {user_input}")
         # Use AIService to generate response
         text = await ai_service.generate_response(user_input)
