@@ -74,7 +74,7 @@ spec:
     spec:
       containers:
         - name: rasa
-          image: ghcr.io/jvizueta/marketing-agent:latest
+          image: ghcr.io/JCTekDev/marketing-agent:latest
           ports:
             - containerPort: 8002
             - containerPort: 5055
@@ -111,4 +111,4 @@ spec:
 - Add CI pipeline for model training & image build
 
 ## License
-Internal usage for jvizueta / ai-customer-service platform.
+Internal usage for J / ai-customer-service platform.
