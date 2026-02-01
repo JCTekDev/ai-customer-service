@@ -9,7 +9,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Configuration
 NAMESPACE=${NAMESPACE:-"ai-customer-service-dev"}
-REGISTRY=${REGISTRY:-"ghcr.io/jvizueta"}
+REGISTRY=${REGISTRY:-"ghcr.io/JCTekDev"}
 TAG=${TAG:-"latest"}
 CONTEXT=${CONTEXT:-""}
 

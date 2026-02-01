@@ -172,7 +172,7 @@ jobs:
           fi
           wget -qO /tmp/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           chmod +x /tmp/yq
-          /tmp/yq eval -i '(.images[] | select(.name == "ghcr.io/jvizueta/ai-customer-service/info-agent")).newTag = "${{ needs.build-and-push.outputs.primary-tag }}"' "$KUSTOMIZE_PATH"
+          /tmp/yq eval -i '(.images[] | select(.name == "ghcr.io/JCTekDev/ai-customer-service/info-agent")).newTag = "${{ needs.build-and-push.outputs.primary-tag }}"' "$KUSTOMIZE_PATH"
           cd k8s-manifests-public
           if git diff --quiet; then
             echo "No changes detected"
@@ -205,7 +205,7 @@ jobs:
             
             ### Changes
             - **Application**: info-agent
-            - **Image**: `ghcr.io/jvizueta/ai-customer-service/info-agent`
+            - **Image**: `ghcr.io/JCTekDev/ai-customer-service/info-agent`
             - **New Tag**: `${{ needs.build-and-push.outputs.primary-tag }}`
             - **Environment**: ${{ needs.build-and-push.outputs.env-name }} (`${{ needs.build-and-push.outputs.overlay-dir }}` overlay)
             - **File**: `ai-customer-service/info-agent/overlays/${{ needs.build-and-push.outputs.overlay-dir }}/kustomization.yaml`

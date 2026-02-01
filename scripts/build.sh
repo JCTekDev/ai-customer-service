@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Configuration
-REGISTRY=${REGISTRY:-"ghcr.io/jvizueta"}
+REGISTRY=${REGISTRY:-"ghcr.io/JCTekDev"}
 TAG=${TAG:-"latest"}
 
 echo "Registry: $REGISTRY"
