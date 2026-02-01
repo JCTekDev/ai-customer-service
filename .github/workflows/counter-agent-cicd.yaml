@@ -193,7 +193,7 @@ jobs:
           chmod +x /tmp/yq
           
           # Update the image tag for counter-agent
-          /tmp/yq eval -i '(.images[] | select(.name == "ghcr.io/jvizueta/ai-customer-service/counter-agent")).newTag = "${{ needs.build-and-push.outputs.primary-tag }}"' "$KUSTOMIZE_PATH"
+          /tmp/yq eval -i '(.images[] | select(.name == "ghcr.io/jctekdev/ai-customer-service/counter-agent")).newTag = "${{ needs.build-and-push.outputs.primary-tag }}"' "$KUSTOMIZE_PATH"
           
           # Check if there are changes
           cd k8s-manifests-public
@@ -228,7 +228,7 @@ jobs:
             
             ### Changes
             - **Application**: counter-agent
-            - **Image**: `ghcr.io/jvizueta/ai-customer-service/counter-agent`
+            - **Image**: `ghcr.io/jctekdev/ai-customer-service/counter-agent`
             - **New Tag**: `${{ needs.build-and-push.outputs.primary-tag }}`
             - **Environment**: ${{ needs.build-and-push.outputs.env-name }} (`${{ needs.build-and-push.outputs.overlay-dir }}` overlay)
             - **File**: `ai-customer-service/counter-agent/overlays/${{ needs.build-and-push.outputs.overlay-dir }}/kustomization.yaml`
